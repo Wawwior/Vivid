@@ -6,6 +6,7 @@ import net.forthecrown.grenadier.command.AbstractCommand;
 import net.forthecrown.grenadier.command.BrigadierCommand;
 import net.forthecrown.grenadier.types.selectors.EntityArgument;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,17 +24,25 @@ public class VividCommand extends AbstractCommand {
     @Override
     protected void createCommand(BrigadierCommand command) {
         command
+                .executes(c -> {
+                    c.getSource().sendMessage(ChatColor.GRAY + "§oRunning Vivid " + Vivid.version);
+                    return 1;
+                })
                 .then(
                         literal("item")
                                 .requires(source -> source.hasPermission(Vivid.VIVID.getYamlConfig().getString("permissions.item")))
                                 .executes(c -> {
                                     c.getSource().asPlayer().getInventory().addItem(Vivid.VIVID.ITEM);
+                                    c.getSource().asPlayer().playSound(c.getSource().asPlayer().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1f);
                                     return 1;
                                 })
                                 .then(
                                         argument("players", EntityArgument.players())
                                                 .executes(c -> {
-                                                    EntityArgument.getPlayers(c, "players").forEach(p -> p.getInventory().addItem(Vivid.VIVID.ITEM));
+                                                    EntityArgument.getPlayers(c, "players").forEach(p -> {
+                                                        p.getInventory().addItem(Vivid.VIVID.ITEM);
+                                                        p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1f);
+                                                    });
                                                     return 1;
                                                 })
                                 )
@@ -84,6 +93,30 @@ public class VividCommand extends AbstractCommand {
                                 )
                 )
                 .then(
+                        literal("set")
+                                .requires(source -> source.hasPermission(Vivid.VIVID.getYamlConfig().getString("permissions.modify.self")))
+                                .then(
+                                        argument("amount", IntegerArgumentType.integer())
+                                                .executes(c -> {
+                                                    Vivid.VIVID.getHealthManager().set(c.getSource().asPlayer(), IntegerArgumentType.getInteger(c, "amount"));
+                                                    c.getSource().sendMessage("Set " + IntegerArgumentType.getInteger(c, "amount") + " hearts for " + c.getSource().asPlayer().getName());
+                                                    return 1;
+                                                })
+                                                .then(
+                                                        argument("players", EntityArgument.players())
+                                                                .requires(source -> source.hasPermission(Vivid.VIVID.getYamlConfig().getString("permissions.modify.others")))
+                                                                .executes(c -> {
+                                                                    List<Player> receivers = EntityArgument.getPlayers(c, "players");
+                                                                    receivers.forEach(r -> {
+                                                                        Vivid.VIVID.getHealthManager().set(r, IntegerArgumentType.getInteger(c, "amount"));
+                                                                    });
+                                                                    c.getSource().sendMessage("Set " + IntegerArgumentType.getInteger(c, "amount") + " hearts for " + c.getInput().split(" ")[3]);
+                                                                    return 1;
+                                                                })
+                                                )
+                                )
+                )
+                .then(
                         literal("add")
                                 .requires(source -> source.hasPermission(Vivid.VIVID.getYamlConfig().getString("permissions.modify.self")))
                                 .then(
@@ -101,7 +134,7 @@ public class VividCommand extends AbstractCommand {
                                                                     receivers.forEach(r -> {
                                                                         Vivid.VIVID.getHealthManager().modify(r, IntegerArgumentType.getInteger(c, "amount"));
                                                                     });
-                                                                    c.getSource().sendMessage("Added " + IntegerArgumentType.getInteger(c, "amount") + " hearts to " + c.getInput().split(" ")[4]);
+                                                                    c.getSource().sendMessage("Added " + IntegerArgumentType.getInteger(c, "amount") + " hearts to " + c.getInput().split(" ")[3]);
                                                                     return 1;
                                                                 })
                                                 )
@@ -126,7 +159,7 @@ public class VividCommand extends AbstractCommand {
                                                                     receivers.forEach(r -> {
                                                                         Vivid.VIVID.getHealthManager().modify(r, -1 * IntegerArgumentType.getInteger(c, "amount"));
                                                                     });
-                                                                    c.getSource().sendMessage("Removed " + IntegerArgumentType.getInteger(c, "amount") + " hearts from " + c.getInput().split(" ")[4]);
+                                                                    c.getSource().sendMessage("Removed " + IntegerArgumentType.getInteger(c, "amount") + " hearts from " + c.getInput().split(" ")[3]);
                                                                     return 1;
                                                                 })
                                                 )

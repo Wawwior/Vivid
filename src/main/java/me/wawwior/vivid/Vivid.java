@@ -28,6 +28,8 @@ public final class Vivid extends JavaPlugin {
 
     public static Vivid VIVID;
 
+    public static final String version = "v1.1";
+
     private HealthManager healthManager;
 
     public final ItemStack ITEM = new ItemStack(Material.TOTEM_OF_UNDYING);

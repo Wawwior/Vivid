@@ -32,6 +32,13 @@ public class HealthManager extends Configurable<HealthManager.HealthConfig> {
         update(player);
     }
 
+    public void set(Player player, int i) {
+        config.health.remove(player.getUniqueId());
+        config.health.put(player.getUniqueId(), i * 2);
+
+        update(player);
+    }
+
     public void update(Player player) {
         int health = config.health.getOrDefault(player.getUniqueId(), 20);
         config.health.remove(player.getUniqueId());
