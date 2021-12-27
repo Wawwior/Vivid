@@ -1,0 +1,43 @@
+# # # # # # # # # # # #
+# Vivid Plugin Config #
+# # # # # # # # # # # #
+
+#The amount of hearts to be stolen/given...
+amount:
+
+  #...when killed by a player
+  players: 1
+
+  #...when dying with another player involved ! Currently not used !
+  indirect: 1
+
+  #...when dying without another player involved
+  environment: 0
+
+  #...when using an artifact
+  artifact: 1
+
+#Whether a player will be banned or put into spectator mode when reaching 0 hearts
+ban: false
+
+#Command permissions
+permissions:
+
+  #Permission required for /vivid transfer
+  transfer: vivid.transfer
+
+  #Permission required for /vivid item
+  item: vivid.item
+
+  #Permission required for /vivid [add|remove] ...
+  modify:
+
+    #...when not using the players argument.
+    self: vivid.modify.self
+
+    #...when using the players argument
+    others: vivid.modify.others
+
+
+
+

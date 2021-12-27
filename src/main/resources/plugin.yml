@@ -1,0 +1,8 @@
+name: Vivid
+version: '${project.version}'
+main: me.wawwior.vivid.Vivid
+api-version: 1.18
+depend: [ Core ]
+authors: [ Wawwior ]
+description: LifeSteal Plugin
+website: https://wawwior.me/plugins/vivid
