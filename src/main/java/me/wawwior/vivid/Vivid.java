@@ -29,7 +29,7 @@ public final class Vivid extends CorePlugin {
 
     @Override
     public String version() {
-        return "1.1.1";
+        return "1.2.0";
     }
 
     @Override
