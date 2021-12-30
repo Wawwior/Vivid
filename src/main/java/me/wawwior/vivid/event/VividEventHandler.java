@@ -20,6 +20,10 @@ import java.util.Objects;
 
 public class VividEventHandler implements Listener {
 
+    private final int players = Vivid.VIVID.getYamlConfig().getInt("amount.players");
+    private final int environment = Vivid.VIVID.getYamlConfig().getInt("amount.environment");
+    private final int artifact = Vivid.VIVID.getYamlConfig().getInt("amount.artifact");
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         EntityDamageEvent deathEvent = event.getPlayer().getLastDamageCause();
@@ -30,13 +34,13 @@ public class VividEventHandler implements Listener {
             case ENTITY_SWEEP_ATTACK:
             case ENTITY_ATTACK: {
                 if (((EntityDamageByEntityEvent) deathEvent).getDamager() instanceof Player) {
-                    Vivid.VIVID.getHealthManager().modify((Player) ((EntityDamageByEntityEvent) deathEvent).getDamager(), Vivid.VIVID.getYamlConfig().getInt("amount.players"));
-                    Vivid.VIVID.getHealthManager().modify(event.getPlayer(), Vivid.VIVID.getYamlConfig().getInt("amount.players") * -1);
+                    Vivid.VIVID.getHealthManager().modify((Player) ((EntityDamageByEntityEvent) deathEvent).getDamager(), players);
+                    Vivid.VIVID.getHealthManager().modify(event.getPlayer(), players * -1);
                 }
                 break;
             }
             default: {
-                Vivid.VIVID.getHealthManager().modify(event.getPlayer(), Vivid.VIVID.getYamlConfig().getInt("amount.environment") * -1);
+                Vivid.VIVID.getHealthManager().modify(event.getPlayer(), environment * -1);
             }
         }
 
@@ -45,16 +49,16 @@ public class VividEventHandler implements Listener {
     @EventHandler
     public void onPlayerUseItem(PlayerInteractEvent event) {
         if (event.getHand().equals(EquipmentSlot.HAND)) {
-            if (event.getPlayer().getInventory().getItem(EquipmentSlot.HAND).equals(Vivid.VIVID.ITEM)) {
-                Vivid.VIVID.getHealthManager().modify(event.getPlayer(), 1);
+            if (Vivid.VIVID.ITEM.equals(event.getPlayer().getInventory().getItem(EquipmentSlot.HAND))) {
+                Vivid.VIVID.getHealthManager().modify(event.getPlayer(), artifact);
                 event.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                 event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_TOTEM_USE, 1f, 1f);
                 event.getPlayer().getWorld().spawnParticle(Particle.HEART, event.getPlayer().getLocation(), 20, 0.5, 1, 0.5);
             }
         }
         if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
-            if (event.getPlayer().getInventory().getItem(EquipmentSlot.OFF_HAND).equals(Vivid.VIVID.ITEM)) {
-                Vivid.VIVID.getHealthManager().modify(event.getPlayer(), 1);
+            if (Vivid.VIVID.ITEM.equals(event.getPlayer().getInventory().getItem(EquipmentSlot.OFF_HAND))) {
+                Vivid.VIVID.getHealthManager().modify(event.getPlayer(), artifact);
                 event.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.AIR));
                 event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_TOTEM_USE, 1f, 1f);
                 event.getPlayer().getWorld().spawnParticle(Particle.HEART, event.getPlayer().getLocation(), 20, 0.5, 1, 0.5);
@@ -65,14 +69,14 @@ public class VividEventHandler implements Listener {
     @EventHandler
     public void onTotem(EntityResurrectEvent event) {
         EntityEquipment equipment = event.getEntity().getEquipment();
-        boolean main = equipment.getItem(EquipmentSlot.HAND).equals(Vivid.VIVID.ITEM);
-        boolean off = equipment.getItem(EquipmentSlot.OFF_HAND).equals(Vivid.VIVID.ITEM);
+        boolean main = Vivid.VIVID.ITEM.equals(equipment.getItem(EquipmentSlot.HAND));
+        boolean off = Vivid.VIVID.ITEM.equals(equipment.getItem(EquipmentSlot.OFF_HAND));
         boolean cancel = (main || off) && !((equipment.getItem(EquipmentSlot.HAND).getType().equals(Material.TOTEM_OF_UNDYING) && !main) || (equipment.getItem(EquipmentSlot.OFF_HAND).getType().equals(Material.TOTEM_OF_UNDYING) && !off));
         cancel = cancel || event.isCancelled();
         event.setCancelled(cancel);
         if (!cancel && main) {
             Bukkit.getScheduler().runTask(Vivid.VIVID, () -> {
-                equipment.setItemInMainHand(Vivid.VIVID.ITEM, true);
+                equipment.setItemInMainHand(Vivid.VIVID.ITEM.getItem(), true);
                 equipment.setItemInOffHand(new ItemStack(Material.AIR), true);
             });
         }

@@ -25,14 +25,14 @@ public class VividCommand extends AbstractCommand {
     protected void createCommand(BrigadierCommand command) {
         command
                 .executes(c -> {
-                    c.getSource().sendMessage(ChatColor.GRAY + "§oRunning Vivid " + Vivid.version);
+                    c.getSource().sendMessage(ChatColor.GRAY + "§oRunning Vivid " + Vivid.VIVID.version());
                     return 1;
                 })
                 .then(
                         literal("item")
                                 .requires(source -> source.hasPermission(Vivid.VIVID.getYamlConfig().getString("permissions.item")))
                                 .executes(c -> {
-                                    c.getSource().asPlayer().getInventory().addItem(Vivid.VIVID.ITEM);
+                                    c.getSource().asPlayer().getInventory().addItem(Vivid.VIVID.ITEM.getItem());
                                     c.getSource().asPlayer().playSound(c.getSource().asPlayer().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1f);
                                     return 1;
                                 })
@@ -40,7 +40,7 @@ public class VividCommand extends AbstractCommand {
                                         argument("players", EntityArgument.players())
                                                 .executes(c -> {
                                                     EntityArgument.getPlayers(c, "players").forEach(p -> {
-                                                        p.getInventory().addItem(Vivid.VIVID.ITEM);
+                                                        p.getInventory().addItem(Vivid.VIVID.ITEM.getItem());
                                                         p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1f);
                                                     });
                                                     return 1;

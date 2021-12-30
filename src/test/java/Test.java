@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
-import me.wawwior.core.util.JsonRecipe;
+import me.wawwior.core.item.JsonRecipe;
+
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
